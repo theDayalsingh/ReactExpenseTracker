@@ -74,9 +74,9 @@ const AuthForm = () => {
       })
       .then((data) => {
         authCtx.login(data.idToken);
-        if(isLogin){
-            navigate("/welcome");
-        }        
+        if (isLogin) {
+          navigate("/welcome");
+        }
       })
       .catch((err) => {
         alert(err.message);
@@ -116,23 +116,23 @@ const AuthForm = () => {
         )}
         {!passwordMatch && (
           <p style={{ color: "red" }}>Passwords do not match</p>
-  )}
-    {showError && <p style={{ color: "red" }}>{showError}</p>}
-    {signupInProgress && <p>Sending Request...</p>}
-    {signupSuccess && <p style={{ color: "green" }}>{signupSuccess}</p>}
-    <div className={classes.actions}>
-      <button>{isLogin ? "Login" : "Create Account"}</button>
-      <button
-        type="button"
-        className={classes.toggle}
-        onClick={switchAuthModeHandler}
-      >
-        {isLogin ? "Create new account" : "Login with existing account"}
-      </button>
-    </div>
-  </form>
-</section>
-);
+        )}
+        {showError && <p style={{ color: "red" }}>{showError}</p>}
+        {signupInProgress && <p>Sending Request...</p>}
+        {signupSuccess && <p style={{ color: "green" }}>{signupSuccess}</p>}
+        <div className={classes.actions}>
+          <button>{isLogin ? "Login" : "Create Account"}</button>
+          <button
+            type="button"
+            className={classes.toggle}
+            onClick={switchAuthModeHandler}
+          >
+            {isLogin ? "Create new account" : "Login with existing account"}
+          </button>
+        </div>
+      </form>
+    </section>
+  );
 };
 
 export default AuthForm;
