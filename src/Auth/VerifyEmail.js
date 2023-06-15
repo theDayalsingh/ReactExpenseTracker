@@ -1,5 +1,6 @@
 import { useContext } from "react";
 import AuthContext from "../Store/storeContext";
+import Logout from "./Logout";
 
 export default function VerifyEmail() {
   const authCtx = useContext(AuthContext);
@@ -45,6 +46,7 @@ export default function VerifyEmail() {
     <button>go to profile page</button>
   </a>
   </div>
+  <Logout/>
   </>
   );
 }
