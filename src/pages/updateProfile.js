@@ -49,6 +49,7 @@ function UpdateProfile() {
       .then((data) => {
         // handle success
         console.log(data)
+        alert(data.displayName)
         setMessage("Profile Updated")
         setTimeout(() => navigate('/welcome'), 2000)
 

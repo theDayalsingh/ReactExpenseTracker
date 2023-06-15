@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route} from "react-router-dom";
 import AuthForm from "./Auth/AuthForm";
 import UpdateProfile from "./pages/updateProfile";
-import Welcome from "./pages/Welcome";
+import VerifyEmail from "./Auth/VerifyEmail";
 
 function App() {
   return (
@@ -9,7 +9,7 @@ function App() {
     <AuthForm />
       <Routes>
         <Route path="/signup"/>
-        <Route exact path="/welcome" element={<Welcome/>}/>
+        <Route exact path="/welcome" element={<VerifyEmail/>}/>
         <Route path="/profile" element={<UpdateProfile />}/>
       </Routes>
     </BrowserRouter>
