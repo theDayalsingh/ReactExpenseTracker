@@ -74,9 +74,12 @@ const AuthForm = () => {
       })
       .then((data) => {
         authCtx.login(data.idToken);
-        if (isLogin) {
-          navigate("/welcome");
+        authCtx.setEmail(data.email)
+        // console.log(data.email)
+        if(isLogin){
+            navigate("/welcome");
         }
+        
       })
       .catch((err) => {
         alert(err.message);
@@ -85,6 +88,23 @@ const AuthForm = () => {
         setSignupInProgress(false);
       });
   };
+
+  const forgotPasswordHandler = () => {
+    const enteredEmail = emailInputRef.current.value;
+    const passUrl = 'https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=AIzaSyA3i7KwDYg7UeEtNbcek1azDb6-fUVPZ7s'
+    fetch(passUrl, {
+      method: "POST",
+      body: JSON.stringify({
+        requestType: "PASSWORD_RESET",
+        email: enteredEmail
+      }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }).then((res) => res.json())
+    .then((data) => console.log(data))
+    .catch((error) => {})
+  }
 
   return (
     <section className={classes.auth}>
@@ -116,23 +136,30 @@ const AuthForm = () => {
         )}
         {!passwordMatch && (
           <p style={{ color: "red" }}>Passwords do not match</p>
-        )}
-        {showError && <p style={{ color: "red" }}>{showError}</p>}
-        {signupInProgress && <p>Sending Request...</p>}
-        {signupSuccess && <p style={{ color: "green" }}>{signupSuccess}</p>}
-        <div className={classes.actions}>
-          <button>{isLogin ? "Login" : "Create Account"}</button>
-          <button
-            type="button"
-            className={classes.toggle}
-            onClick={switchAuthModeHandler}
-          >
-            {isLogin ? "Create new account" : "Login with existing account"}
-          </button>
-        </div>
-      </form>
-    </section>
-  );
+  )}
+    {showError && <p style={{ color: "red" }}>{showError}</p>}
+    {signupInProgress && <p>Sending Request...</p>}
+    {signupSuccess && <p style={{ color: "green" }}>{signupSuccess}</p>}
+    <div className={classes.actions}>
+      <button>{isLogin ? "Login" : "Create Account"}</button>
+      <button
+        type="button"
+        className={classes.toggle}
+        onClick={switchAuthModeHandler}
+      >
+        {isLogin ? "Create new account" : "Login with existing account"}
+      </button>
+    { isLogin && <button
+        type="button"
+        className={classes.toggle}
+        onClick={forgotPasswordHandler}
+      >
+          Forgot Password
+      </button>}
+    </div>
+  </form>
+</section>
+);
 };
 
 export default AuthForm;
