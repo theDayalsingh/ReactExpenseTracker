@@ -46,6 +46,9 @@ export default function VerifyEmail() {
     <button>go to profile page</button>
   </a>
   </div>
+  <a href="/dailyexp">
+  <button>Daily Expenses</button>
+</a>
   <Logout/>
   </>
   );

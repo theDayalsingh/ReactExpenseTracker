@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios"
 
 const AuthContext = React.createContext({
   token: "",
@@ -7,6 +8,11 @@ const AuthContext = React.createContext({
   logout: () => {},
   email: "",
   setEmail: () => {},
+  expItems: [],
+  addExpense: () => {},
+  deleteExpense: () => {},
+  editExpense: () => {},
+  updateExpense: () => {}
 });
 
 export const AuthContextProvider = (props) => {
@@ -15,6 +21,83 @@ export const AuthContextProvider = (props) => {
   const userIsLoggedIn = !!token;
   const storedEmail = localStorage.getItem("email");
   const [email, setEmail] = useState(storedEmail);
+  const [expItems, setExpItems] = useState([])
+
+  const firebaseDB = `https://reactexpense-fe1e8-default-rtdb.firebaseio.com/${email.replace(/[.@]/g, "")}`
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await axios.get(`${firebaseDB}.json`);
+      const data = response.data;
+      const loadedExpItems = [];
+
+      for (const key in data) {
+        loadedExpItems.push({
+          id: key,
+          amount: data[key].amount,
+          description: data[key].description,
+          category: data[key].category,
+        });
+      }
+
+      setExpItems(loadedExpItems);
+    };
+
+    fetchData();
+  }, []);
+
+  const addExpense = async(amountSpent, description, category) => {
+    const newExpItem = {
+      amount: amountSpent,
+      description: description,
+      category: category
+    };
+    const res = await axios.post(`${firebaseDB}.json`, newExpItem)
+    console.log(res)
+
+    const resGet = await axios.get(`${firebaseDB}/${res.data.name}.json`)
+    const loadedExpItem = {
+      id: res.data.name,
+      amount: resGet.data.amount,
+      description: resGet.data.description,
+      category: resGet.data.category,
+    };
+    setExpItems((prevExpItems) => [...prevExpItems, loadedExpItem]);
+  };
+  const deleteExpense = async (id) => {
+    await axios.delete(`${firebaseDB}/${id}.json`);
+    setExpItems((prevExpItems) => prevExpItems.filter((expItem) => expItem.id !== id));
+  };
+
+  
+
+  const editExpense = async (id, amountSpent, description, category) => {
+    const resGet = await axios.get(`${firebaseDB}/${id}.json`)
+    amountSpent = resGet.data.amount
+    description = resGet.data.description
+    category = resGet.data.category
+  };
+  
+  const updateExpense = async (updatedExpense) => {
+    try {
+      const response = await axios.put(`${firebaseDB}/${updatedExpense.id}.json`, 
+        {
+          id: updatedExpense.id,
+          amount: updatedExpense.amount,
+          description: updatedExpense.description,
+          category: updatedExpense.category
+        },
+      );
+      window.location.reload(false)
+      
+      if (!response.ok) {
+        throw new Error('Failed to update expense');
+      }
+    } catch (error) {
+      console.error(error);
+    }
+
+  }
 
   const loginHandler = (token) => {
     setToken(token);
@@ -40,7 +123,7 @@ export const AuthContextProvider = (props) => {
 
         if (minutesInactive >= 5) {
           logoutHandler();
-          window.location.href = "/signup"; // Redirect to the logout page
+          window.location.href = "/signup"; 
         }
       };
 
@@ -62,8 +145,12 @@ export const AuthContextProvider = (props) => {
     logout: logoutHandler,
     email,
     setEmail: setEmailHandler,
+    addExpense: addExpense,
+    expItems: expItems,
+    deleteExpense: deleteExpense,
+    editExpense: editExpense,
+    updateExpense: updateExpense
   };
-  // console.log(contextValue.email)
 
   return (
     <AuthContext.Provider value={contextValue}>
