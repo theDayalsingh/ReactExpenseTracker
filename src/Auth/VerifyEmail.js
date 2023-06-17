@@ -1,13 +1,10 @@
-import { useContext } from "react";
-import AuthContext from "../Store/storeContext";
-import Logout from "./Logout";
+import { useSelector } from 'react-redux';
+import  Button  from 'react-bootstrap/Button';
 
 export default function VerifyEmail() {
-  const authCtx = useContext(AuthContext);
-  function verifyEmailHandler() {
-    
+  const idToken = useSelector((state) => state.auth.token)
 
-    const idToken = authCtx.token;
+  function verifyEmailHandler() {
     const url =
       "https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=AIzaSyA3i7KwDYg7UeEtNbcek1azDb6-fUVPZ7s";
     const requestBody = {
@@ -26,30 +23,26 @@ export default function VerifyEmail() {
           console.log("Failed to verify email");
           throw new Error("Failed to update profile");
         }
-
+        if(response.ok){
+          window.alert('verification mail sent')
+        }
         return response.json();
       })
       .then((data) => {
-        // handle success
         console.log(data);
         console.log("Profile Updated");
       })
       .catch((error) => {
-        // handle error
       });
   }
-  return (
-    <>
-    <button onClick={verifyEmailHandler}>verify email</button>
-  <div> Welcome to Expense Tracker
-  <a href="/profile">
-    <button>go to profile page</button>
-  </a>
-  </div>
-  <a href="/dailyexp">
-  <button>Daily Expenses</button>
-</a>
-  <Logout/>
-  </>
-  );
+    return (
+     
+          <div >
+            <h4 style={{marginBottom: '1rem'}}>
+                Click to verify your email address
+              </h4>
+              <Button onClick={verifyEmailHandler}>Verify Email</Button>
+          </div>
+       
+    );
 }
